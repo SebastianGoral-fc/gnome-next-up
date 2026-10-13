@@ -35,6 +35,7 @@ export default class NextUpExtension extends Extension {
         this.path + "/assets/party-popper.png"
       ),
       openPrefsCallback: this.openPreferences.bind(this),
+      eventsChangedCallback: () => this.refreshIndicator(),
     });
 
     this._settings = this.getSettings();
@@ -53,6 +54,7 @@ export default class NextUpExtension extends Extension {
       3,
       () => {
         this.loadIndicator();
+        this.refreshIndicator();
         this._startLoop();
 
         return false;
@@ -111,11 +113,12 @@ export default class NextUpExtension extends Extension {
   }
 
   disable() {
-    Main.panel._centerBox.remove_child(this._indicator.container);
+    this._indicator.container.get_parent()?.remove_child(this._indicator.container);
 
     this._settings.disconnect(this._settingChangedSignal);
     this._settings = null;
 
+    this._indicator.destroyCalendarSource();
     this._indicator.destroy();
     this._indicator = null;
 

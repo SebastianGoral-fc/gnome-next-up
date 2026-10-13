@@ -11,6 +11,11 @@ export default class Indicator extends PanelMenu.Button {
     super();
     this._confettiGicon = props.confettiGicon;
     this._openPrefsCallback = props.openPrefsCallback;
+    this._eventsChangedCallback = props.eventsChangedCallback;
+    this._calendarChangedSignal = this._calendarSource.connect(
+      "changed",
+      this._eventsChangedCallback
+    );
   }
 
   _init() {
@@ -71,6 +76,15 @@ export default class Indicator extends PanelMenu.Button {
 
   showConfettiIcon() {
     this.icon.set_gicon(this._confettiGicon);
+  }
+
+  destroyCalendarSource() {
+    if (this._calendarChangedSignal) {
+      this._calendarSource.disconnect(this._calendarChangedSignal);
+      this._calendarChangedSignal = null;
+    }
+
+    this._calendarSource.destroy();
   }
 
   vfunc_event(event) {

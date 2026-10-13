@@ -27,6 +27,10 @@ export function getTodaysEvents(calendarSource) {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
+  // Loading is asynchronous. requestRange() starts the load and the event
+  // source's "changed" signal causes the indicator to read the result later.
+  src.requestRange(today, tomorrow);
+
   const todaysEvents = src.getEvents(today, tomorrow).filter(notFullDayEvent);
 
   return todaysEvents;
